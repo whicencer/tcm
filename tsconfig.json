@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+    "module": "Commonjs",
+    "target": "ES2022",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "noImplicitAny": true,
+    "declaration": true,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+      "allowSyntheticDefaultImports": true
+    },
+  "include": ["src/**/*", "index.ts", "environment.d.ts"],
+  "exclude": ["node_modules"]
+}

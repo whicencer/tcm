@@ -1,0 +1,26 @@
+version: '3.1'
+
+services:
+  db:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - type: bind
+        source: ./data
+        target: /data/db
+
+  app:
+    build: .
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      BOT_TOKEN: 7369198048:AAGhVIoa8YzFuOJ32exvaNwFstvpsJivNhU
+      DATABASE_URL: mongodb://db:27017/db
+
+volumes:
+  data: null
