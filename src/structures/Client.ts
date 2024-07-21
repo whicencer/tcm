@@ -494,7 +494,7 @@ export class ChannelManagerBot extends Bot {
 
     public async startBot() {
         //mongodb://localhost:27017 mongodb://db:27017/db
-        mongoose.connect(process.env.BOT_TOKEN).then(() => {
+        mongoose.connect(process.env.DATABASE_URL).then(() => {
             console.log("Connected to db")
         });
         await this.start({
