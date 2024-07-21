@@ -59,6 +59,7 @@ export default class NotRobot extends Button {
                                 caption: greet?.text,
                                 caption_entities: entities,
                                 reply_markup: greetButtonsKeyboard,
+                                disable_web_page_preview: true
                             });
                             if (greet.autoDelete) {
                                 setTimeout(async () => {
@@ -91,6 +92,7 @@ export default class NotRobot extends Button {
                         const greetMessage = await ctx.api.sendMessage(ctxUser.user.id, greet?.text, {
                             entities,
                             reply_markup: greetButtonsKeyboard,
+                            disable_web_page_preview: true
                         });
                         if (greet.autoDelete) {
                             setTimeout(async () => {
