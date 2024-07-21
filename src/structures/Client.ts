@@ -43,18 +43,27 @@ export class ChannelManagerBot extends Bot {
             const ctxUser = await ctx.getAuthor();
             const admin = await Admin.findOne({_id: ctxUser.user.id})
 
-            if (admin && admin.inputMode) {
-                const command = this.findCommand(admin.command.split(" ")[0], `${admin.command.split(" ")[0]} ${admin.command.split(" ")[1]}`)
-
-                if (command) {
-                    admin.value = ctx.message.text ? ctx.message.text : ctx.message.caption;
-                    await admin.save()
-
+            if (admin && admin.inputMode ) {
+                if((ctx.message?.entities && ctx.message?.entities.some(obj => obj.type === "custom_emoji")) || (ctx.message?.caption_entities && ctx.message?.caption_entities.some(obj => obj.type === "custom_emoji"))) {
+                    const reply = await ctx.reply("❌ Нельзя использовать анимированные эмодзи")
                     if (admin.cleanMessages) {
-                        admin.messagesToDelete = [...admin.messagesToDelete, ctx.message.message_id]
+                        admin.messagesToDelete = [...admin.messagesToDelete, ctx.message.message_id, reply.message_id]
                         await admin.save()
                     }
-                    await command.run(ctx, this)
+                }
+                else {
+                    const command = this.findCommand(admin.command.split(" ")[0], `${admin.command.split(" ")[0]} ${admin.command.split(" ")[1]}`)
+
+                    if (command) {
+                        admin.value = ctx.message.text ? ctx.message.text : ctx.message.caption;
+                        await admin.save()
+
+                        if (admin.cleanMessages) {
+                            admin.messagesToDelete = [...admin.messagesToDelete, ctx.message.message_id]
+                            await admin.save()
+                        }
+                        await command.run(ctx, this)
+                    }
                 }
             }
         })
@@ -187,6 +196,7 @@ export class ChannelManagerBot extends Bot {
                                         caption: greet?.text,
                                         caption_entities: entities,
                                         reply_markup: greetButtonsKeyboard,
+                                        disable_web_page_preview: true
                                     });
                                     if (greet.autoDelete) {
                                         setTimeout(async () => {
@@ -219,6 +229,7 @@ export class ChannelManagerBot extends Bot {
                                 const greetMessage = await ctx.api.sendMessage(ctx.update.chat_member.from.id, greet?.text, {
                                     entities,
                                     reply_markup: greetButtonsKeyboard,
+                                    disable_web_page_preview: true
                                 });
                                 if (greet.autoDelete) {
                                     setTimeout(async () => {
@@ -266,6 +277,7 @@ export class ChannelManagerBot extends Bot {
                                     caption: leave?.text,
                                     caption_entities: entities,
                                     reply_markup: leaveButtonKeyboard,
+                                    disable_web_page_preview: true
                                 });
                                 if (leave.autoDelete) {
                                     setTimeout(async () => {
@@ -281,6 +293,7 @@ export class ChannelManagerBot extends Bot {
                                 }))
                                 mediaGroup[0].caption = leave.text;
                                 mediaGroup[0].caption_entities = entities;
+                                mediaGroup[0].disable_web_page_preview = true;
 
                                 const leaveMessage = await ctx.api.sendMediaGroup(ctx.update.chat_member.from.id, mediaGroup, {disable_web_page_preview: true});
 
@@ -298,6 +311,7 @@ export class ChannelManagerBot extends Bot {
                             const leaveMessage = await ctx.api.sendMessage(ctx.update.chat_member.from.id, leave?.text, {
                                 entities,
                                 reply_markup: leaveButtonKeyboard,
+                                disable_web_page_preview: true
                             });
                             if (leave.autoDelete) {
                                 setTimeout(async () => {
@@ -418,6 +432,7 @@ export class ChannelManagerBot extends Bot {
                                     caption: greet?.text,
                                     caption_entities: entities,
                                     reply_markup: greetButtonsKeyboard,
+                                    disable_web_page_preview: true
                                 });
                                 if (greet.autoDelete) {
                                     setTimeout(async () => {
@@ -450,6 +465,7 @@ export class ChannelManagerBot extends Bot {
                             const greetMessage = await ctx.api.sendMessage(ctx.update.chat_join_request.from.id, greet?.text, {
                                 entities,
                                 reply_markup: greetButtonsKeyboard,
+                                disable_web_page_preview: true
                             });
                             if (greet.autoDelete) {
                                 setTimeout(async () => {
@@ -478,7 +494,7 @@ export class ChannelManagerBot extends Bot {
 
     public async startBot() {
         //mongodb://localhost:27017 mongodb://db:27017/db
-        mongoose.connect(process.env.DATABASE_URL).then(() => {
+        mongoose.connect(process.env.BOT_TOKEN).then(() => {
             console.log("Connected to db")
         });
         await this.start({
