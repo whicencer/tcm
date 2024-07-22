@@ -464,7 +464,7 @@ export default class Leavings extends Command {
                             reply_markup: leaveButtonsKeyboard,
                             disable_web_page_preview: true
                         });
-                        if (admin.messagesToDelete.length > 0) {
+                        if (admin?.messagesToDelete?.length > 0) {
                             admin.messagesToDelete.forEach(async (message) => {
                                 await ctx.api.deleteMessage(ctx.chat.id, message);
                             });
