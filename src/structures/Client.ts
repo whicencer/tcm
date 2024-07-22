@@ -307,18 +307,22 @@ export class ChannelManagerBot extends Bot {
                             }, leave?.timeOut ? leave.timeOut : 0)
                         }
                     } else {
-                        setTimeout(async () => {
-                            const leaveMessage = await ctx.api.sendMessage(ctx.update.chat_member.from.id, leave?.text, {
-                                entities,
-                                reply_markup: leaveButtonKeyboard,
-                                disable_web_page_preview: true
-                            });
-                            if (leave.autoDelete) {
-                                setTimeout(async () => {
-                                    await ctx.api.deleteMessage(ctx.update.chat_member.from.id, leaveMessage.message_id);
-                                }, leave?.autoDelete ? leave.autoDelete : 0)
-                            }
-                        }, leave?.timeOut ? leave.timeOut : 0)
+                        try {
+                            setTimeout(async () => {
+                                const leaveMessage = await ctx.api.sendMessage(ctx.update.chat_member.from.id, leave?.text, {
+                                    entities,
+                                    reply_markup: leaveButtonKeyboard,
+                                    disable_web_page_preview: true
+                                });
+                                if (leave.autoDelete) {
+                                    setTimeout(async () => {
+                                        await ctx.api.deleteMessage(ctx.update.chat_member.from.id, leaveMessage.message_id);
+                                    }, leave?.autoDelete ? leave.autoDelete : 0)
+                                }
+                            }, leave?.timeOut ? leave.timeOut : 0)
+                        } catch (err) {
+                            console.log("\x1b[31mErr! Bot can`t send leaving message to user\x1b[0m")
+                        }
                     }
                 }
             }
