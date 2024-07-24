@@ -7,9 +7,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - type: bind
-        source: ./data
-        target: /data/db
+      - ./data:/data/db
 
   app:
     build: .
@@ -23,4 +21,4 @@ services:
       DATABASE_URL: mongodb://db:27017/db
 
 volumes:
-  data: null
+  data:
